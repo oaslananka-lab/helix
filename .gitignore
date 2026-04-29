@@ -13,7 +13,7 @@ build/
 .env.local
 .env.*.local
 *.log
-logs/
+/logs/
 
 # Test and coverage
 coverage/
