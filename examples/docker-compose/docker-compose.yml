@@ -1,0 +1,49 @@
+services:
+  gateway:
+    image: ghcr.io/oaslananka-lab/helix/gateway:latest
+    container_name: helix-gateway
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      PORT: "3000"
+      PUBLIC_URL: http://localhost:3000
+      AGENT_KEYS_JSON: '{"local-agent":"change-this-secret-min-32-chars"}'
+      INTERNAL_BEARER_TOKEN: change-this-bearer-token-min-32-chars
+      OTEL_ENABLED: "false"
+    networks:
+      - helix
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3000/health_check"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  agent:
+    image: ghcr.io/oaslananka-lab/helix/agent:latest
+    container_name: helix-agent
+    restart: unless-stopped
+    ports:
+      - "3001:3001"
+    environment:
+      AGENT_ID: local-agent
+      AGENT_NAME: Local Development Agent
+      GATEWAY_WS_URL: ws://gateway:3000/agent/ws
+      AGENT_KEY: change-this-secret-min-32-chars
+      REPO_ROOTS_JSON: '["/workspace"]'
+      DASHBOARD_ENABLED: "true"
+      DASHBOARD_PORT: "3001"
+      ENABLE_GIT: "true"
+      ENABLE_DOCKER: "false"
+      OTEL_ENABLED: "false"
+    volumes:
+      - ${HOME}/projects:/workspace:ro
+    networks:
+      - helix
+    depends_on:
+      gateway:
+        condition: service_healthy
+
+networks:
+  helix:
+    driver: bridge

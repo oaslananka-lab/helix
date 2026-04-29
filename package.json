@@ -1,0 +1,31 @@
+{
+  "name": "helix",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Production-grade MCP agent ecosystem with gateway, agent, and shared protocol packages",
+  "author": "oaslananka",
+  "license": "MIT",
+  "homepage": "https://github.com/oaslananka/helix",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/oaslananka/helix.git"
+  },
+  "packageManager": "pnpm@10.33.0",
+  "engines": {
+    "node": ">=20.0.0",
+    "pnpm": ">=9.0.0"
+  },
+  "scripts": {
+    "build": "pnpm -r --sort build",
+    "dev": "pnpm -r --parallel dev",
+    "test": "pnpm --filter @helix/shared build && pnpm -r --filter !@helix/shared test",
+    "test:ci": "pnpm --filter @helix/shared build && pnpm -r --filter !@helix/shared test:ci",
+    "lint": "pnpm -r lint",
+    "typecheck": "pnpm --filter @helix/shared build && pnpm -r typecheck",
+    "clean": "pnpm -r clean && node -e \"require('node:fs').rmSync('node_modules',{recursive:true,force:true})\"",
+    "release": "pnpm changeset version && pnpm changeset publish"
+  },
+  "devDependencies": {
+    "@changesets/cli": "^2.29.7"
+  }
+}

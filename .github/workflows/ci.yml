@@ -1,0 +1,168 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  packages: read
+
+jobs:
+  workspace:
+    name: Workspace Checks
+    if: github.repository == 'oaslananka-lab/helix'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: pnpm/action-setup@v6
+        with:
+          version: 10.33.0
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 20
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
+
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+      - run: pnpm lint
+      - run: pnpm typecheck
+      - run: pnpm test
+
+  security:
+    name: Security Audit and SBOM
+    if: github.repository == 'oaslananka-lab/helix'
+    needs: workspace
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: read
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: pnpm/action-setup@v6
+        with:
+          version: 10.33.0
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 20
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: npm audit for high and critical issues
+        run: pnpm audit --audit-level=high
+
+      - name: Generate Gateway SBOM
+        run: |
+          pnpm --filter @helix/gateway exec cyclonedx-npm \
+            --ignore-npm-errors \
+            --output-format json \
+            --output-file ../../sbom-gateway.json \
+            2> cyclonedx-gateway.log || {
+              cat cyclonedx-gateway.log
+              exit 1
+            }
+          test -s sbom-gateway.json
+
+      - name: Generate Agent SBOM
+        run: |
+          pnpm --filter @helix/agent exec cyclonedx-npm \
+            --ignore-npm-errors \
+            --output-format json \
+            --output-file ../../sbom-agent.json \
+            2> cyclonedx-agent.log || {
+              cat cyclonedx-agent.log
+              exit 1
+            }
+          test -s sbom-agent.json
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: sbom-reports
+          path: |
+            sbom-gateway.json
+            sbom-agent.json
+
+  docker-build:
+    name: Docker Build Smoke Test
+    if: github.repository == 'oaslananka-lab/helix'
+    needs: workspace
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
+
+      - name: Build Gateway image
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: packages/gateway/Dockerfile
+          push: false
+          load: true
+          tags: helix-gateway:ci-test
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Build Agent image
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: packages/agent/Dockerfile
+          push: false
+          load: true
+          tags: helix-agent:ci-test
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Smoke test Gateway starts
+        run: |
+          docker run -d --name test-gateway \
+            -e PORT=3000 \
+            -e AGENT_KEYS_JSON='{"ci-agent":"ci-test-key-00000000000000000000"}' \
+            helix-gateway:ci-test
+          sleep 5
+          wget -qO- http://localhost:3000/health_check
+          docker logs test-gateway
+          docker rm -f test-gateway
+
+      - name: Smoke test Agent image can run Node
+        run: |
+          docker run --rm --entrypoint node helix-agent:ci-test -e "console.log('agent image ok')"
+
+  node-compat:
+    name: Node.js ${{ matrix.node }} Compat
+    if: github.repository == 'oaslananka-lab/helix'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node: [20, 22, 24]
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: pnpm/action-setup@v6
+        with:
+          version: 10.33.0
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: ${{ matrix.node }}
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
+
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build

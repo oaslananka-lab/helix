@@ -1,0 +1,31 @@
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      opentelemetry:
+        patterns:
+          - "@opentelemetry/*"
+      typescript:
+        patterns:
+          - "typescript"
+          - "tsx"
+          - "@types/*"
+          - "@typescript-eslint/*"
+
+  - package-ecosystem: docker
+    directory: /packages/gateway
+    schedule:
+      interval: weekly
+
+  - package-ecosystem: docker
+    directory: /packages/agent
+    schedule:
+      interval: weekly
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly

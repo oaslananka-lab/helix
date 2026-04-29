@@ -1,0 +1,30 @@
+export {
+  AGENT_PROTOCOL_VERSION,
+  AgentMessageSchema,
+  AgentToolSchema,
+  AgentCapabilitiesSchema,
+  AgentMetaSchema,
+  AgentRegisterMessageSchema,
+  AgentPingMessageSchema,
+  AgentPongMessageSchema,
+  AgentCapabilitiesUpdateMessageSchema,
+  AgentCallRequestSchema,
+  AgentCallResultSchema,
+  validateAgentMessage,
+  isCallResult,
+  isPing,
+  isCapabilitiesUpdate,
+} from '@helix/shared';
+
+export type {
+  AgentTool,
+  AgentCapabilities,
+  AgentMeta,
+  AgentRegisterMessage,
+  AgentPingMessage,
+  AgentPongMessage,
+  AgentCapabilitiesUpdateMessage,
+  AgentCallRequest,
+  AgentCallResult,
+  AgentMessage,
+} from '@helix/shared';
