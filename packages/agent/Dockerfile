@@ -1,4 +1,4 @@
-FROM node:20-alpine AS builder
+FROM node:25-alpine AS builder
 WORKDIR /workspace
 
 RUN apk add --no-cache git ripgrep docker-cli
@@ -19,7 +19,7 @@ COPY packages/agent/plugins ./packages/agent/plugins
 RUN pnpm --filter @helix/shared build
 RUN pnpm --filter @helix/agent build
 
-FROM node:20-alpine AS runner
+FROM node:25-alpine AS runner
 LABEL org.opencontainers.image.source="https://github.com/oaslananka/helix"
 LABEL org.opencontainers.image.description="Helix Agent - local machine tool exposure"
 LABEL org.opencontainers.image.licenses="MIT"
