@@ -17,7 +17,7 @@ jobs:
       - uses: actions/checkout@v6
         with:
           fetch-depth: 0
-${tokenIndent}token: ${{ github.token }}
+          token: ${{ github.token }}
 
       - name: Configure upstream remote
         run: |
@@ -39,3 +39,4 @@ ${tokenIndent}token: ${{ github.token }}
         run: |
           git push origin main
           git push origin --tags
+

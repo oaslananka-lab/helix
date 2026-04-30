@@ -18,7 +18,7 @@ jobs:
     steps:
       - uses: actions/checkout@v6
         with:
-${tokenIndent}token: ${{ github.token }}
+          token: ${{ github.token }}
           fetch-depth: 0
 
       - uses: pnpm/action-setup@v6
@@ -112,3 +112,4 @@ ${tokenIndent}token: ${{ github.token }}
             sbom-agent.json
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+

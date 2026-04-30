@@ -22,7 +22,7 @@ jobs:
     steps:
       - uses: actions/checkout@v6
         with:
-${tokenIndent}token: ${{ github.token }}
+          token: ${{ github.token }}
 
       - uses: pnpm/action-setup@v6
         with:
@@ -51,7 +51,7 @@ ${tokenIndent}token: ${{ github.token }}
     steps:
       - uses: actions/checkout@v6
         with:
-${tokenIndent}token: ${{ github.token }}
+          token: ${{ github.token }}
 
       - uses: pnpm/action-setup@v6
         with:
@@ -107,7 +107,7 @@ ${tokenIndent}token: ${{ github.token }}
     steps:
       - uses: actions/checkout@v6
         with:
-${tokenIndent}token: ${{ github.token }}
+          token: ${{ github.token }}
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v4
@@ -164,7 +164,7 @@ ${tokenIndent}token: ${{ github.token }}
     steps:
       - uses: actions/checkout@v6
         with:
-${tokenIndent}token: ${{ github.token }}
+          token: ${{ github.token }}
 
       - uses: pnpm/action-setup@v6
         with:
@@ -178,3 +178,4 @@ ${tokenIndent}token: ${{ github.token }}
 
       - run: pnpm install --frozen-lockfile
       - run: pnpm build
+
