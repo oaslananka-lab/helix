@@ -21,6 +21,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
+        with:
+          token: ${{ github.token }}
 
       - uses: pnpm/action-setup@v6
         with:
@@ -48,6 +50,8 @@ jobs:
       packages: read
     steps:
       - uses: actions/checkout@v6
+        with:
+          token: ${{ github.token }}
 
       - uses: pnpm/action-setup@v6
         with:
@@ -102,6 +106,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
+        with:
+          token: ${{ github.token }}
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v4
@@ -157,6 +163,8 @@ jobs:
         node: [20, 22, 24]
     steps:
       - uses: actions/checkout@v6
+        with:
+          token: ${{ github.token }}
 
       - uses: pnpm/action-setup@v6
         with:
@@ -170,3 +178,4 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
       - run: pnpm build
+

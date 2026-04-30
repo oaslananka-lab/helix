@@ -17,7 +17,7 @@ jobs:
       - uses: actions/checkout@v6
         with:
           fetch-depth: 0
-          token: ${{ secrets.PAT_LAB_SYNC || github.token }}
+          token: ${{ github.token }}
 
       - name: Configure upstream remote
         run: |
@@ -39,3 +39,4 @@ jobs:
         run: |
           git push origin main
           git push origin --tags
+
