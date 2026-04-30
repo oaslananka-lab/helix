@@ -1,4 +1,4 @@
-FROM node:20-alpine AS builder
+FROM node:25-alpine AS builder
 WORKDIR /workspace
 
 RUN corepack enable && corepack prepare pnpm@10.33.0 --activate
@@ -18,7 +18,7 @@ COPY packages/gateway/public ./packages/gateway/public
 RUN pnpm --filter @helix/shared build
 RUN pnpm --filter @helix/gateway build
 
-FROM node:20-alpine AS runner
+FROM node:25-alpine AS runner
 LABEL org.opencontainers.image.source="https://github.com/oaslananka/helix"
 LABEL org.opencontainers.image.description="Helix Gateway - MCP aggregation gateway"
 LABEL org.opencontainers.image.licenses="MIT"
