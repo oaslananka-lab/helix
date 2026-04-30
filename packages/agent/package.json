@@ -42,7 +42,7 @@
     "@opentelemetry/sdk-node": "^0.213.0",
     "@opentelemetry/semantic-conventions": "^1.40.0",
     "cors": "^2.8.5",
-    "execa": "^6.1.0",
+    "execa": "^9.6.1",
     "express": "^5.2.1",
     "pino": "^8.17.2",
     "pino-pretty": "^10.3.1",
